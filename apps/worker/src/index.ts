@@ -1,6 +1,6 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { Kafka } from "kafkajs";
-import "dotenv/config";
 import fs from "fs";
 import path from "path";
 
@@ -14,10 +14,9 @@ const kafka = new Kafka({
   clientId: "outbox-processor-consumer",
   brokers: [process.env.KAFKA_BROKER!],
   ssl: {
-  rejectUnauthorized: true,
-  ca: [fs.readFileSync(caPath, "utf-8")],
+    rejectUnauthorized: true,
+    ca: [Buffer.from(process.env.KAFKA_CA_BASE64!, "base64").toString("utf-8")],
   },
-
   sasl: {
     mechanism: "scram-sha-256",
     username: process.env.KAFKA_USERNAME!,
